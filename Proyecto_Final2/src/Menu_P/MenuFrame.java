@@ -64,6 +64,7 @@ public class MenuFrame extends JFrame implements ActionListener {
         panelOculto.setVisible(false);
 
         cargarDatosDesdeArchivo();
+        JComboBox<String> cmbPresidentesExternos = new JComboBox<>();
 
         formularioPanel = new Panel_Jugador(modeloTabla1, this);
         add(formularioPanel);
@@ -71,7 +72,7 @@ public class MenuFrame extends JFrame implements ActionListener {
         add(formularioPanel2);
         formularioPanel3 = new PanelArbitro(modeloTabla3);
         add(formularioPanel3);
-        formularioPanel4 = new PanelDirigente(modeloTabla4);
+        formularioPanel4 = new PanelDirigente(modeloTabla4, cmbPresidentesExternos);
         add(formularioPanel4);
         formularioPanel5 = new Panel_Partidos(modeloTabla5,this);
         add(formularioPanel5);
@@ -186,7 +187,7 @@ public class MenuFrame extends JFrame implements ActionListener {
     }
 
     public void guardarDatosEnArchivo() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("tabla_jugador_equipos.txt"))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("tabla_equipos.txt"))) {
             for (int i = 0; i < modeloTablaOculta.getRowCount(); i++) {
                 for (int j = 0; j < modeloTablaOculta.getColumnCount(); j++) {
                     writer.write(modeloTablaOculta.getValueAt(i, j).toString());
@@ -202,7 +203,7 @@ public class MenuFrame extends JFrame implements ActionListener {
     }
 
     private void cargarDatosDesdeArchivo() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("tabla_jugador_equipos.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("tabla_equipos.txt"))) {
             String line;
 
             // Leer las líneas para cargar los datos y encontrar el mayor número de jugador por equipo
@@ -236,7 +237,6 @@ public class MenuFrame extends JFrame implements ActionListener {
                             data[3] = String.valueOf(contadoresPorEquipo.get(nombreEquipo));
                         }
                     }
-
                     modeloTablaOculta.addRow(data);
                 } else {
                     System.out.println("Línea de datos inválida (menos de 3 columnas): " + line);  // Mensaje de depuración detallado
@@ -271,9 +271,9 @@ public class MenuFrame extends JFrame implements ActionListener {
             mostrarPanel(formularioPanel3);
         } else if (e.getSource() == nuevo_op4) {
             mostrarPanel(formularioPanel4);
-        } else if (e.getSource() == nuevo_op5) {
-            mostrarPanel(formularioPanel5);
-        }else if (e.getSource() == salir) {
+        }else if (e.getSource() == nuevo_op5) {
+                mostrarPanel(formularioPanel5);
+        } else if (e.getSource() == salir) {
             System.exit(0);
         } else if (e.getSource() == p_principal) {
             getContentPane().removeAll();
@@ -309,5 +309,4 @@ public class MenuFrame extends JFrame implements ActionListener {
         revalidate();
         repaint();
     }
-    
 }
