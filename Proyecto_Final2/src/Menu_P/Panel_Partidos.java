@@ -50,7 +50,7 @@ public class Panel_Partidos extends JPanel implements ActionListener {
     private List<Partido> listaPartidos;
     private JComboBox<String> comboLocal, comboVisitante;
     private JTextField textoMarcadorLocal, textoMarcadorVisitante;
-    private JButton botonRegistrarPartido;
+    private JButton botonRegistrarPartido,botonActualizarEquipos;
     private DefaultTableModel modeloTabla5;
     private JTable tablaPartidos,tablaOculta;
     private List<Equipo> listaEquipos;
@@ -108,7 +108,11 @@ public class Panel_Partidos extends JPanel implements ActionListener {
         add(botonRegistrarPartido);
         botonRegistrarPartido.addActionListener(this);
 
-        
+        // Botón para actualizar equipos
+        botonActualizarEquipos = new JButton("Actualizar Equipos");
+        botonActualizarEquipos.setBounds(630, 20, 150, 30);
+        add(botonActualizarEquipos);
+        botonActualizarEquipos.addActionListener(this);
 
         modeloTabla5 = new DefaultTableModel();
         modeloTabla5.addColumn("Local");
@@ -207,6 +211,8 @@ public class Panel_Partidos extends JPanel implements ActionListener {
 
             textoMarcadorLocal.setText("");
             textoMarcadorVisitante.setText("");
+        }else if (e.getSource() == botonActualizarEquipos) {
+            actualizarComboEquipos(); // Actualizar los ComboBox de equipos
         }
     }
 

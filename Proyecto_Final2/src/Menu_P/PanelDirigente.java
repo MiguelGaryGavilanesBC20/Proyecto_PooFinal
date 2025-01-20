@@ -2,7 +2,6 @@ package Menu_P;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-//import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -31,7 +30,7 @@ class Dirigente {
         this.cargo = cargo;
     }
 
-    // Getters y Setters (opcional si necesitas acceder a los campos)
+    // Getters y Setters
     public String getNombre() {
         return nombre;
     }
@@ -57,7 +56,6 @@ class Dirigente {
     }
 }
 
-
 // Clase principal PanelDirigente
 public class PanelDirigente extends JPanel implements ActionListener {
     private List<Dirigente> listaDirigentes;
@@ -65,13 +63,13 @@ public class PanelDirigente extends JPanel implements ActionListener {
     private JTextField txtNombre, txtPatrimonio, txtAnioEleccion, txtEdad, txtCedula;
     private JButton btnRegistrar;
     private JTable tablaDirigentes;
-    private JComboBox<String> cmbCargo,cmbDia, cmbMes;
+    private JComboBox<String> cmbCargo, cmbDia, cmbMes;
+    private JComboBox<String> cmbPresidentesExternos; // ComboBox externo para presidentes en PanelEquipo
 
-    public PanelDirigente(DefaultTableModel modeloTabla4) {
+    public PanelDirigente(DefaultTableModel modeloTabla4, JComboBox<String> cmbPresidentesExternos) {
         this.listaDirigentes = new ArrayList<>();
         this.modeloTabla4 = modeloTabla4;
-
-        
+        this.cmbPresidentesExternos = cmbPresidentesExternos;
 
         setLayout(null);
 
@@ -83,7 +81,7 @@ public class PanelDirigente extends JPanel implements ActionListener {
         txtNombre = new JTextField();
         txtNombre.setBounds(180, 20, 150, 20);
         add(txtNombre);
-        
+
         JLabel lbEdad = new JLabel("Edad");
         lbEdad.setBounds(370, 20, 50, 20);
         add(lbEdad);
@@ -97,15 +95,15 @@ public class PanelDirigente extends JPanel implements ActionListener {
         add(lbCargo);
 
         cmbCargo = new JComboBox<>(new String[]{
-            "Director Técnico (Entrenador)",
-            "Asistentes técnicos",
-            "Presidente",
-            "Vicepresidente",
-            "Vocal",
-            "Médico"
+                "Director Técnico (Entrenador)",
+                "Asistentes técnicos",
+                "Presidente",
+                "Vicepresidente",
+                "Vocal",
+                "Médico"
         });
-          cmbCargo.setBounds(410, 50, 200, 20);
-         add(cmbCargo);
+        cmbCargo.setBounds(410, 50, 200, 20);
+        add(cmbCargo);
 
         JLabel lbCedula = new JLabel("Cédula");
         lbCedula.setBounds(50, 50, 120, 20);
@@ -170,13 +168,10 @@ public class PanelDirigente extends JPanel implements ActionListener {
         JScrollPane scrollPane = new JScrollPane(tablaDirigentes);
         scrollPane.setBounds(40, 130, 1050, 290);
         add(scrollPane);
-        
-        
 
         cargarDatosDesdeArchivo();
     }
 
-   
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnRegistrar) {
             String nombre = txtNombre.getText();
@@ -190,7 +185,7 @@ public class PanelDirigente extends JPanel implements ActionListener {
 
             if (nombre.isEmpty() || cargo.isEmpty() || edadTexto.isEmpty() || cedula.isEmpty() || patrimonioTexto.isEmpty() || dia.isEmpty() || mes.isEmpty() || anio.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.",
-                "Error al agregar los datos", JOptionPane.ERROR_MESSAGE);
+                        "Error al agregar los datos", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -199,22 +194,27 @@ public class PanelDirigente extends JPanel implements ActionListener {
                 double patrimonio = Double.parseDouble(patrimonioTexto);
 
                 int anioNumero = Integer.parseInt(anio);
-                  if (anioNumero < 1900 || anioNumero > 2025) {
+                if (anioNumero < 1900 || anioNumero > 2025) {
                     JOptionPane.showMessageDialog(this, "Por favor, ingrese un año válido entre 1900 y 2025.",
-                    "Error al agregar los datos", JOptionPane.ERROR_MESSAGE);
-                     return;
-                  }
+                            "Error al agregar los datos", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-                  if (edad < 18 || edad > 90) {
-                    JOptionPane.showMessageDialog(this, "Por favor, ingrese una edad valida",
-                    "Error al agregar los datos", JOptionPane.ERROR_MESSAGE);
-                     return;
-                  }
-                  
-                  String fechaEleccion = dia + " de " + mes + " del " + anio;
+                if (edad < 18 || edad > 90) {
+                    JOptionPane.showMessageDialog(this, "Por favor, ingrese una edad válida",
+                            "Error al agregar los datos", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                String fechaEleccion = dia + " de " + mes + " del " + anio;
 
                 modeloTabla4.addRow(new Object[]{nombre, cargo, edad, cedula, String.format("$%.2f", patrimonio), fechaEleccion});
                 listaDirigentes.add(new Dirigente(nombre, edad, cedula, fechaEleccion, patrimonio, cargo));
+
+                // Agregar presidente al ComboBox externo
+                if (cargo.equals("Presidente")) {
+                    cmbPresidentesExternos.addItem(nombre);
+                }
 
                 limpiarCampos();
                 guardarDatosEnArchivos();
@@ -245,11 +245,11 @@ public class PanelDirigente extends JPanel implements ActionListener {
             for (int i = 0; i < modeloTabla4.getRowCount(); i++) {
                 writer.write(
                         modeloTabla4.getValueAt(i, 0) + "," +
-                        modeloTabla4.getValueAt(i, 1) + "," +
-                        modeloTabla4.getValueAt(i, 2) + "," +
-                        modeloTabla4.getValueAt(i, 3) + "," +
-                        modeloTabla4.getValueAt(i, 4) + "," +
-                        modeloTabla4.getValueAt(i, 5)
+                                modeloTabla4.getValueAt(i, 1) + "," +
+                                modeloTabla4.getValueAt(i, 2) + "," +
+                                modeloTabla4.getValueAt(i, 3) + "," +
+                                modeloTabla4.getValueAt(i, 4) + "," +
+                                modeloTabla4.getValueAt(i, 5)
                 );
                 writer.newLine();
             }
@@ -266,6 +266,11 @@ public class PanelDirigente extends JPanel implements ActionListener {
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
                 modeloTabla4.addRow(data);
+
+                // Agregar presidentes del archivo al ComboBox externo
+                if (data[1].equals("Presidente")) {
+                    cmbPresidentesExternos.addItem(data[0]);
+                }
             }
             //JOptionPane.showMessageDialog(this, "Datos cargados exitosamente.");
         } catch (IOException ex) {
@@ -277,7 +282,7 @@ public class PanelDirigente extends JPanel implements ActionListener {
     public void actualizarContenido() {
         // Lógica para actualizar la tabla o el contenido
         modeloTabla4.fireTableDataChanged();
-    } 
+    }
 
     public DefaultTableModel getModeloTabla() {
         return modeloTabla4;

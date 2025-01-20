@@ -9,11 +9,11 @@ import java.io.FileReader;
 public class Presidente {
 
     private String nombre_apellidos;
-    
+
 
     public Presidente(String nombre_apellidos) {
         this.nombre_apellidos = nombre_apellidos;
-        
+
     }
 
     // Getters y Setters

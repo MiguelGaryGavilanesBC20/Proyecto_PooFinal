@@ -22,7 +22,7 @@ class Equipo {
         this.nombre = nombre;
         this.categoria = categoria;
         this.presidente = presidente;
-       // this.listaJugadores = new ArrayList<>();
+        // this.listaJugadores = new ArrayList<>();
     }
 
     // Getters y Setters
@@ -59,7 +59,7 @@ class Equipo {
 
 public class Panel_Equipo extends JPanel implements ActionListener {
 
-    private JButton botonRegistrar, botonRegistrarPresidente;
+    private JButton botonRegistrar, botonRegistrarPresidente,botonActualizarPresidentes;
     private JLabel label1, label3, label4, labelPresidente;
     private JTextField texto1, textoPresidenteNombre;
     private DefaultTableModel modeloTabla2;
@@ -78,7 +78,7 @@ public class Panel_Equipo extends JPanel implements ActionListener {
         this.panelJugador = panelJugador; // Guardamos la referencia al Panel_Jugador
         this.menuFrame = menuFrame;
         setLayout(null);
-        
+
         // Campo para registrar el equipo
         label1 = new JLabel("Nombre del Equipo");
         label1.setBounds(50, 20, 120, 20);
@@ -100,7 +100,7 @@ public class Panel_Equipo extends JPanel implements ActionListener {
         label4.setBounds(50, 50, 80, 20);
         add(label4);
 
-        
+
         actualizarComboPresidente();  // Cargar presidentes del archivo
 
         botonRegistrar = new JButton("Registrar Equipo");
@@ -127,11 +127,11 @@ public class Panel_Equipo extends JPanel implements ActionListener {
         add(botonRegistrarPresidente);
         botonRegistrarPresidente.addActionListener(this);
 
-        /* 
-        btnGuardarNombres = new JButton("Guardar Nombres");
-        btnGuardarNombres.setBounds(300, 60, 150, 30);
-        add(btnGuardarNombres);
-        btnGuardarNombres.addActionListener(this);*/
+        // Botón para actualizar los presidentes en el ComboBox
+        botonActualizarPresidentes = new JButton("Actualizar Presidentes");
+        botonActualizarPresidentes.setBounds(850, 60, 160, 30);
+        add(botonActualizarPresidentes);
+        botonActualizarPresidentes.addActionListener(this);
 
         // Tabla para equipos
         this.modeloTabla2 = modeloTabla2;
@@ -147,10 +147,10 @@ public class Panel_Equipo extends JPanel implements ActionListener {
         cargarDatosDesdeArchivo();
     }
 
-    
+
     public void actionPerformed(ActionEvent e) {
-       
-       if (e.getSource() == botonRegistrar) {
+
+        if (e.getSource() == botonRegistrar) {
 
             String nombre = primeraletra(texto1.getText());
             String categoria = obtenerSeleccionComboBox(comboCategoria);
@@ -160,10 +160,10 @@ public class Panel_Equipo extends JPanel implements ActionListener {
                 JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.",
                         "Error al agregar los datos", JOptionPane.ERROR_MESSAGE);
             } else {
-                
+
 
                 listaEquipos.add(new Equipo(nombre, categoria, presidente));
-                
+
                 modeloTabla2.addRow(new Object[]{nombre, categoria, presidente});
 
                 System.out.println("Agregando equipo a la tabla oculta en MenuFrame: " + nombre); // Mensaje de depuración
@@ -175,9 +175,9 @@ public class Panel_Equipo extends JPanel implements ActionListener {
                 //listaJugadores.clear();  // Limpiar la lista de jugadores después de registrar el equipo
                 guardarDatosEnArchivos();
             }
-        //}else if (e.getSource() == btnGuardarNombres) {
-                //guardarNombresEnArchivo();
-            
+            //}else if (e.getSource() == btnGuardarNombres) {
+            //guardarNombresEnArchivo();
+
         } else if (e.getSource() == botonRegistrarPresidente) {
             // Registrar el nuevo presidente
             String nombre_apellidos_p = textoPresidenteNombre.getText().trim();
@@ -187,17 +187,17 @@ public class Panel_Equipo extends JPanel implements ActionListener {
                         "Por favor, complete todos los campos del presidente.",
                         "Error al agregar el presidente", JOptionPane.ERROR_MESSAGE);
             } else {
-                
+
                 Presidente presidente = new Presidente(nombre_apellidos_p);
                 Presidente.guardarPresidente(presidente);
                 actualizarComboPresidente();  // Actualizar la lista de presidentes
                 JOptionPane.showMessageDialog(this,
                         "Presidente registrado correctamente.",
                         "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                        
-                        actualizarComboPresidente();
             }
-        }
+        }else if (e.getSource() == botonActualizarPresidentes) {
+            // Actualizar el ComboBox de presidentes
+            actualizarComboPresidente();}
     }
 
     private String primeraletra(String palabra) {
@@ -227,7 +227,7 @@ public class Panel_Equipo extends JPanel implements ActionListener {
         }
         return listaNombres;
     }
-    
+
 
     public void actualizarComboPresidente() {
         if (comboPresidente == null) {
@@ -236,7 +236,7 @@ public class Panel_Equipo extends JPanel implements ActionListener {
             add(comboPresidente);
         }
         comboPresidente.removeAllItems();
-    
+
         // Cargar datos desde nombres_presidentes.txt
         ArrayList<String> listaPresidentes = cargarNombresDesdeArchivo("nombres_presidentes.txt");
         for (String nombre : listaPresidentes) {
@@ -244,7 +244,7 @@ public class Panel_Equipo extends JPanel implements ActionListener {
                 comboPresidente.addItem(nombre.trim());
             }
         }
-    
+
         // Cargar datos desde tabla_dirigentes.txt donde posición 1 sea "Presidente"
         ArrayList<String> listaDirigentes = cargarNombresDesdeArchivo("tabla_dirigentes.txt");
         for (String linea : listaDirigentes) {
@@ -261,7 +261,7 @@ public class Panel_Equipo extends JPanel implements ActionListener {
                 }
             }
         }
-    
+
         // Mostrar mensaje si no hay datos
         if (comboPresidente.getItemCount() == 0) {
             JOptionPane.showMessageDialog(this, "No se encontraron presidentes en los archivos.",
@@ -278,8 +278,8 @@ public class Panel_Equipo extends JPanel implements ActionListener {
             for (int i = 0; i < modeloTabla2.getRowCount(); i++) {
                 writer.write(
                         modeloTabla2.getValueAt(i, 0) + "," +
-                        modeloTabla2.getValueAt(i, 1) + "," +
-                        modeloTabla2.getValueAt(i, 2) 
+                                modeloTabla2.getValueAt(i, 1) + "," +
+                                modeloTabla2.getValueAt(i, 2)
                 );
                 writer.newLine();
             }
@@ -301,9 +301,5 @@ public class Panel_Equipo extends JPanel implements ActionListener {
             JOptionPane.showMessageDialog(this, "Error al cargar los datos: " + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
-    public void actualizarContenido() {
-        // Lógica para actualizar la tabla o el contenido
-        modeloTabla2.fireTableDataChanged();
     }
 }
